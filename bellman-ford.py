@@ -13,7 +13,6 @@ min_distance_graph_direction = [-1 for i in range(n)]
 
 
 def bellman_ford(source, sink, previous_nodes=[]):
-    print(source + 1)
 
     #Returns the halt situation
     if source == sink:
@@ -90,12 +89,12 @@ def report_min_distance_results(sink):
         if distance_to_sink_for_node == -1:
             print("Distance from node " + str(distance_index + 1) + " to " + str(sink + 1) + " has not been evaluated.")
         else:
-            print("Distance from node " + str(distance_index + 1) + " to " + str(sink + 1) + " is " + str(distance_to_sink_for_node) + ("." if minimum_distance_path_to_sink < 0 else (", the goes through node " + str(minimum_distance_path_to_sink + 1) + ".")))
+            print("Distance from node " + str(distance_index + 1) + " to " + str(sink + 1) + " is " + str(distance_to_sink_for_node) + ("." if minimum_distance_path_to_sink < 0 else (", goes through node " + str(minimum_distance_path_to_sink + 1) + ".")))
 
 
 if __name__ == "__main__":
-    source = 3
-    sink = 2
+    source = 7
+    sink = 1
 
     minimum_distance = bellman_ford(source - 1, sink - 1)
 
