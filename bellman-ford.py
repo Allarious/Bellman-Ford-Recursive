@@ -9,6 +9,7 @@ graph = [[0, -1, -1, -1, -1, -1, -1],
          [-1, -1, -1, -1, 2, 2, 0]]
 
 min_distance_graph = [[-1 for i in range(n)] for j in range(n)]
+min_distance_graph_direction = [-1 for i in range(n)]
 
 
 def bellman_ford(source, sink, previous_nodes=[]):
@@ -42,7 +43,11 @@ def bellman_ford(source, sink, previous_nodes=[]):
         distance_to_source_from_neighbors.append(
             distance_to_source_from_one_neighbor + node_distance_to_neighbors[neighbor])
 
+    #Set the direction for each node, so we can know how the shortest path graph looks like
     min_distance = min(distance_to_source_from_neighbors)
+    min_distance_index = distance_to_source_from_neighbors.index(min_distance)
+    min_distance_graph_direction[source] = neighbors[min_distance_index]
+
 
     #Saves the data so it does not need to iterate again
     min_distance_graph[source][sink] = min_distance
@@ -53,17 +58,36 @@ def bellman_ford(source, sink, previous_nodes=[]):
             neighbor_min_distance_from_this_node = min_distance + graph[neighbor][source]
             if neighbor_min_distance_from_this_node < min_distance_graph[neighbor][sink]:
                 min_distance_graph[neighbor][sink] = neighbor_min_distance_from_this_node
+                min_distance_graph_direction[neighbor] = source
 
     return min_distance
 
 
+def report_min_distance_results(sink):
+
+    distance_to_sink = []
+
+    for distance_to_neighbors in min_distance_graph:
+        distance_to_sink.append(distance_to_neighbors[sink])
+
+    for distance_index in range(len(distance_to_sink)):
+        distance_to_sink_for_node = distance_to_sink[distance_index]
+        minimum_distance_path_to_sink = min_distance_graph_direction[distance_index]
+        if distance_to_sink_for_node == -1:
+            print("Distance from node " + str(distance_index + 1) + " to " + str(sink + 1) + " has not been evaluated.")
+        else:
+            print("Distance from node " + str(distance_index + 1) + " to " + str(sink + 1) + " is " + str(distance_to_sink_for_node) + ("." if minimum_distance_path_to_sink < 0 else (", the goes through node " + str(minimum_distance_path_to_sink + 1) + ".")))
+
+
 if __name__ == "__main__":
-    source = 6
+    source = 7
     sink = 1
 
     minimum_distance = bellman_ford(source - 1, sink - 1)
 
     print("Minimum distance from node " + str(source) + " to " + str(sink) + " is " + str(minimum_distance))
 
-    print("Minimum distance graph from each node: " + str(min_distance_graph))
+    report_min_distance_results(sink - 1)
+
+
 
