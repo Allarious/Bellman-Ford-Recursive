@@ -2,7 +2,7 @@ n = 7
 
 graph = [[0, -1, -1, -1, -1, -1, -1],
          [4, 0, -1, -1, -1, -1, -1],
-         [5, 6, 0, -1, -1, -1, -1],
+         [5, 6, 0, 3, -1, -1, -1],
          [-1, 3, 4, 0, 4, -1, -1],
          [-1, 10, -1, 6, 0, 2, -1],
          [-1, -1, 9, 3, 3, 0, -1],
@@ -13,6 +13,7 @@ min_distance_graph_direction = [-1 for i in range(n)]
 
 
 def bellman_ford(source, sink, previous_nodes=[]):
+    print(source + 1)
 
     #Returns the halt situation
     if source == sink:
@@ -40,11 +41,24 @@ def bellman_ford(source, sink, previous_nodes=[]):
             distance_to_source_from_one_neighbor = bellman_ford(neighbor, sink, new_previous_nodes)
         else:
             distance_to_source_from_one_neighbor = min_distance_value
-        distance_to_source_from_neighbors.append(
-            distance_to_source_from_one_neighbor + node_distance_to_neighbors[neighbor])
+
+        if distance_to_source_from_one_neighbor != -1:
+            distance_to_source_from_neighbors.append(distance_to_source_from_one_neighbor + node_distance_to_neighbors[neighbor])
+        else:
+            distance_to_source_from_neighbors.append(-1)
+
+
+    distance_from_neighbors_that_are_connected = []
+    for distance in distance_to_source_from_neighbors:
+        if distance >= 0:
+            distance_from_neighbors_that_are_connected.append(distance)
+
+
+    if len(distance_from_neighbors_that_are_connected) == 0:
+        return -1
 
     #Set the direction for each node, so we can know how the shortest path graph looks like
-    min_distance = min(distance_to_source_from_neighbors)
+    min_distance = min(distance_from_neighbors_that_are_connected)
     min_distance_index = distance_to_source_from_neighbors.index(min_distance)
     min_distance_graph_direction[source] = neighbors[min_distance_index]
 
@@ -80,12 +94,15 @@ def report_min_distance_results(sink):
 
 
 if __name__ == "__main__":
-    source = 7
-    sink = 1
+    source = 3
+    sink = 2
 
     minimum_distance = bellman_ford(source - 1, sink - 1)
 
-    print("Minimum distance from node " + str(source) + " to " + str(sink) + " is " + str(minimum_distance))
+    if minimum_distance != -1:
+        print("Minimum distance from node " + str(source) + " to " + str(sink) + " is " + str(minimum_distance))
+    else:
+        print("There is no way from source to sink.")
 
     report_min_distance_results(sink - 1)
 
